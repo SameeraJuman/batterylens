@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BatteryLens</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/themes.css">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="theme-dark">
+
+  <!-- HEADER -->
+  <header id="app-header">
+    <div class="brand-wrap">
+      <svg class="brand-logo-icon" viewBox="0 0 44 22" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect x="1" y="1" width="37" height="20" rx="5" fill="none" stroke="currentColor" stroke-width="2"/>
+        <rect x="38" y="7" width="5" height="8" rx="2" fill="currentColor"/>
+        <rect x="4" y="4" width="24" height="14" rx="3" fill="currentColor"/>
+      </svg>
+      <div class="brand-text-group">
+        <span class="brand">BatteryLens</span>
+        <span class="brand-slogan">Know your devices. No surprises.</span>
+      </div>
+    </div>
+    <div id="theme-swatches">
+      <button class="theme-swatch" data-theme="dark"     title="Dark"></button>
+      <button class="theme-swatch" data-theme="light"    title="Light"></button>
+      <button class="theme-swatch" data-theme="midnight" title="Midnight"></button>
+      <button class="theme-swatch" data-theme="sunset"   title="Sunset"></button>
+      <button class="theme-swatch" data-theme="forest"   title="Forest"></button>
+      <button class="theme-swatch" data-theme="neon"     title="Neon"></button>
+    </div>
+    <button id="btn-add-device" class="d-none">+ Add Device</button>
+  </header>
+
+  <!-- EMPTY STATE (shown when 0 devices) -->
+  <section id="empty-state">
+    <div class="empty-state-inner">
+      <div class="empty-icon">🔋</div>
+      <h2 class="empty-title">No devices yet</h2>
+      <p class="empty-subtitle">Connect a Bluetooth device to see its battery level.</p>
+      <button id="btn-add-device-empty" class="btn-add-primary">+ Add Device</button>
+    </div>
+  </section>
+
+  <!-- WIDGET GRID SECTION (hidden when 0 devices or toggle off) -->
+  <section id="widget-section" class="d-none">
+    <div id="widget-grid-header">
+      <h2>Devices</h2>
+      <button id="btn-toggle-widgets">&#9660;</button>
+    </div>
+    <div id="widget-grid"><!-- widget cards injected here --></div>
+  </section>
+
+  <!-- DEVICE LIST SECTION -->
+  <section id="list-section" class="d-none">
+    <table id="device-list">
+      <tbody><!-- list rows injected here --></tbody>
+    </table>
+  </section>
+
+  <!-- SCRIPTS (order matters) -->
+  <script src="js/utils.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/bluetooth.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/app.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
