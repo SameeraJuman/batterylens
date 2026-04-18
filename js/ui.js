@@ -46,9 +46,57 @@ const ui = (() => {
     });
   }
 
+  function buildWidgetCard(device) {
+    const isLow = device.battery !== null && device.battery < 20;
+    const color = getBatteryColor(device.battery);
+    const icon  = getDeviceIcon(device.name);
+    const pctText = device.battery !== null ? `${device.battery}%` : '—';
+
+    const card = document.createElement('div');
+    card.className = 'widget-card' + (isLow ? ' low-battery' : '');
+    card.dataset.deviceId = device.id;
+
+    card.innerHTML = `
+      <div class="widget-circle-wrap">
+        <svg viewBox="0 0 100 100" width="100" height="100" aria-hidden="true">
+          <circle cx="50" cy="50" r="45" fill="none"
+                  stroke="var(--border)" stroke-width="8"/>
+          <circle class="battery-arc" cx="50" cy="50" r="45" fill="none"
+                  stroke="${color}" stroke-width="8"
+                  stroke-dasharray="283" stroke-dashoffset="283"/>
+        </svg>
+        <span class="widget-icon">${icon}</span>
+      </div>
+      <div class="widget-percent">${pctText}</div>
+      <div class="widget-name" title="${device.name}">${device.name}</div>
+    `;
+
+    return card;
+  }
+
   function renderWidgetGrid(devices, hidden) {
-    // stub — implemented in step 6
-    widgetSection.classList.toggle('d-none', hidden);
+    widgetSection.classList.remove('d-none');
+
+    const grid = document.getElementById('widget-grid');
+    const toggleBtn = document.getElementById('btn-toggle-widgets');
+    grid.classList.toggle('d-none', hidden);
+    toggleBtn.textContent = hidden ? '▲' : '▼';
+
+    if (hidden) return;
+
+    grid.innerHTML = '';
+
+    devices.forEach(device => {
+      const card = buildWidgetCard(device);
+      grid.appendChild(card);
+
+      requestAnimationFrame(() => {
+        const arc = card.querySelector('.battery-arc');
+        const offset = calcArcOffset(device.battery);
+        arc.style.setProperty('--target-offset', offset);
+        arc.style.animation = 'fillArc 1s ease-out forwards';
+      });
+    });
   }
 
   function renderDeviceList(devices) {
