@@ -162,6 +162,9 @@ body {
 #widget-section {
   padding: 20px 24px 8px;
   border-bottom: 1px solid var(--border);
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 #widget-grid-header {
@@ -272,6 +275,9 @@ body {
 
 #list-section {
   padding: 0 24px 32px;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 #device-list {
@@ -403,6 +409,80 @@ body {
 
 .btn-trash:hover {
   color: var(--accent-red);
+}
+
+/* =============================================
+   RESPONSIVE — card stack below 600px
+   ============================================= */
+
+@media (max-width: 600px) {
+  #list-section {
+    padding: 0 12px 24px;
+  }
+
+  #device-list thead {
+    display: none;
+  }
+
+  #device-list,
+  #device-list tbody,
+  .device-row {
+    display: block;
+    width: 100%;
+  }
+
+  .device-row {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 12px;
+    padding: 12px;
+  }
+
+  .device-row td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border: none;
+  }
+
+  .device-row td[data-label]::before {
+    content: attr(data-label);
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--text-muted);
+    flex-shrink: 0;
+    margin-right: 12px;
+  }
+
+  .device-row .cell-icon {
+    justify-content: flex-start;
+    width: auto;
+    font-size: 1.5rem;
+  }
+
+  .device-row .cell-battery {
+    min-width: unset;
+  }
+
+  .device-row .cell-battery > div {
+    flex: 1;
+  }
+
+  .device-row .cell-trash {
+    justify-content: flex-end;
+    width: auto;
+  }
+
+  .btn-trash {
+    opacity: 1;
+  }
+
+  #widget-section {
+    padding: 16px 12px 8px;
+  }
 }
 
 /* =============================================

@@ -58,7 +58,17 @@ function removeDevice(id) {
   ui.render(storage.getDevices(), storage.getPrefs());
 }
 
-const app = { removeDevice };
+function updateNickname(id, value) {
+  const all = storage.getDevices();
+  const device = all.find(d => d.id === id);
+  if (device) {
+    device.name = value;
+    storage.saveDevice(device);
+    ui.render(storage.getDevices(), storage.getPrefs());
+  }
+}
+
+const app = { removeDevice, updateNickname };
 
 function bindEvents() {
   document.getElementById('btn-add-device-empty').addEventListener('click', handleAddDevice);

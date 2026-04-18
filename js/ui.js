@@ -132,6 +132,35 @@ const ui = (() => {
     return wrap;
   }
 
+  function enableInlineEdit(nameSpan, device) {
+    nameSpan.style.cursor = 'pointer';
+    nameSpan.title = 'Click to rename';
+    nameSpan.addEventListener('click', () => {
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.value = device.name;
+      input.className = 'name-edit-input';
+      input.style.cssText = 'width:100%;background:transparent;border:none;border-bottom:1px solid var(--accent-primary);color:inherit;font:inherit;outline:none;padding:0;';
+
+      nameSpan.replaceWith(input);
+      input.focus();
+      input.select();
+
+      function commit() {
+        const val = input.value.trim() || device.name;
+        if (typeof app !== 'undefined' && app.updateNickname) {
+          app.updateNickname(device.id, val);
+        }
+      }
+
+      input.addEventListener('blur', commit);
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') { e.preventDefault(); input.blur(); }
+        if (e.key === 'Escape') { input.value = device.name; input.blur(); }
+      });
+    });
+  }
+
   function renderDeviceList(devices) {
     listSection.classList.remove('d-none');
     const tbody = document.querySelector('#device-list tbody');
@@ -155,14 +184,17 @@ const ui = (() => {
       // Name cell
       const tdName = document.createElement('td');
       tdName.className = 'cell-name';
+      tdName.dataset.label = 'Device';
       const nameSpan = document.createElement('span');
       nameSpan.className = 'name-text';
       nameSpan.textContent = device.name;
       tdName.appendChild(nameSpan);
+      enableInlineEdit(nameSpan, device);
 
       // Status badge cell
       const tdStatus = document.createElement('td');
       tdStatus.className = 'cell-status';
+      tdStatus.dataset.label = 'Status';
       const badge = document.createElement('span');
       badge.className = isConnected
         ? 'badge bg-success'
@@ -173,11 +205,13 @@ const ui = (() => {
       // Last seen cell
       const tdLastSeen = document.createElement('td');
       tdLastSeen.className = 'cell-lastseen';
+      tdLastSeen.dataset.label = 'Last seen';
       tdLastSeen.textContent = timestamp;
 
       // Battery cell
       const tdBattery = document.createElement('td');
       tdBattery.className = 'cell-battery';
+      tdBattery.dataset.label = 'Battery';
       tdBattery.appendChild(renderBatteryBar(device));
 
       // Trash cell
@@ -188,8 +222,10 @@ const ui = (() => {
       trashBtn.title = 'Remove device';
       trashBtn.innerHTML = '&#x1F5D1;';
       trashBtn.addEventListener('click', () => {
-        if (typeof app !== 'undefined' && app.removeDevice) {
-          app.removeDevice(device.id);
+        if (confirm(`Remove "${device.name}" from your device list?`)) {
+          if (typeof app !== 'undefined' && app.removeDevice) {
+            app.removeDevice(device.id);
+          }
         }
       });
       tdTrash.appendChild(trashBtn);
