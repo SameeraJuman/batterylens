@@ -34,6 +34,12 @@ Built as my project for the **Learning Hackathon: Spec Driven Development**.
 - Web Bluetooth on Windows can occasionally drop the connection immediately after pairing — turning the device off and back on usually fixes it
 - If a device is already actively connected to another device (e.g. your phone), the battery read may fail or return no data — this is a Web Bluetooth limitation, not a bug
 
+## Screenshots
+
+![Full dashboard](screenshots/full-dashboard.png)
+![Theme switcher](screenshots/theme-switch.png)
+![Widget grid](screenshots/widget.png)
+
 ## Live App
 
 [batterylens on GitHub Pages](https://sameerajuman.github.io/batterylens/)
