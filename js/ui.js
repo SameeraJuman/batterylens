@@ -191,6 +191,22 @@ const ui = (() => {
       tdName.appendChild(nameSpan);
       enableInlineEdit(nameSpan, device);
 
+      if (device.originalName && device.originalName !== device.name) {
+        const hint = document.createElement('div');
+        hint.className = 'name-original-hint';
+        hint.textContent = `Originally: ${device.originalName} `;
+        const restoreBtn = document.createElement('button');
+        restoreBtn.className = 'btn-restore';
+        restoreBtn.textContent = 'Restore';
+        restoreBtn.addEventListener('click', () => {
+          if (typeof app !== 'undefined' && app.restoreNickname) {
+            app.restoreNickname(device.id);
+          }
+        });
+        hint.appendChild(restoreBtn);
+        tdName.appendChild(hint);
+      }
+
       // Status badge cell
       const tdStatus = document.createElement('td');
       tdStatus.className = 'cell-status';

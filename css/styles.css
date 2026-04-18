@@ -345,6 +345,27 @@ body {
   outline: none;
 }
 
+.name-original-hint {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+  font-weight: 400;
+}
+
+.btn-restore {
+  background: none;
+  border: none;
+  color: var(--accent-primary);
+  font-size: 0.72rem;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+}
+
+.btn-restore:hover {
+  opacity: 0.75;
+}
+
 .device-row .cell-status {
   width: 120px;
 }

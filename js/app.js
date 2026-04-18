@@ -72,7 +72,17 @@ function updateNickname(id, value) {
   }
 }
 
-const app = { removeDevice, updateNickname };
+function restoreNickname(id) {
+  const all = storage.getDevices();
+  const device = all.find(d => d.id === id);
+  if (device && device.originalName) {
+    device.name = device.originalName;
+    storage.saveDevice(device);
+    ui.render(getDevicesWithStatus(), storage.getPrefs());
+  }
+}
+
+const app = { removeDevice, updateNickname, restoreNickname };
 
 function bindEvents() {
   document.getElementById('btn-add-device-empty').addEventListener('click', handleAddDevice);

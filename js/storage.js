@@ -9,15 +9,19 @@ const storage = {
   },
 
   saveDevice(device) {
-    const devices = this.getDevices();
-    const idx = devices.findIndex(d => d.id === device.id || d.name === device.name);
+    const raw = localStorage.getItem(DEVICES_KEY);
+    const all = raw ? JSON.parse(raw) : [];
+    const idx = all.findIndex(d => d.id === device.id || d.name === device.name);
     const toSave = { ...device, connected: false };
     if (idx >= 0) {
-      devices[idx] = { ...devices[idx], ...toSave };
+      // Preserve originalName set on first save — never overwrite it
+      toSave.originalName = all[idx].originalName || all[idx].name;
+      all[idx] = { ...all[idx], ...toSave };
     } else {
-      devices.push(toSave);
+      toSave.originalName = toSave.name;
+      all.push(toSave);
     }
-    localStorage.setItem(DEVICES_KEY, JSON.stringify(devices));
+    localStorage.setItem(DEVICES_KEY, JSON.stringify(all));
   },
 
   removeDevice(id) {
