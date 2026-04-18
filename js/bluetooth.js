@@ -32,10 +32,16 @@ const bluetooth = (() => {
   }
 
   function setupDisconnectListener(device) {
-    device.addEventListener('gattserverdisconnected', () => {
+    // Use a named handler stored on the device object so we can remove it
+    // before re-attaching after a successful reconnect — prevents listener stacking.
+    if (device._disconnectHandler) {
+      device.removeEventListener('gattserverdisconnected', device._disconnectHandler);
+    }
+    device._disconnectHandler = () => {
       onDeviceDisconnected(device.id);
       attemptReconnect(device, 3);
-    });
+    };
+    device.addEventListener('gattserverdisconnected', device._disconnectHandler);
   }
 
   // acceptAllDevices so any paired device appears in the picker, not only

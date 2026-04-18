@@ -1,18 +1,20 @@
+// Runtime set — tracks which device ids are connected this session only.
+// Not persisted: on reload all devices start disconnected regardless of prior state.
+const connectedIds = new Set();
+
+function getDevicesWithStatus() {
+  return storage.getDevices().map(d => ({ ...d, connected: connectedIds.has(d.id) }));
+}
+
 document.addEventListener('DOMContentLoaded', () => {
-  const devices = storage.getDevices();
-  const prefs   = storage.getPrefs();
+  const prefs = storage.getPrefs();
   applyTheme(prefs.theme);
-  ui.render(devices, prefs);
+  ui.render(getDevicesWithStatus(), prefs);
   bindEvents();
 
   bluetooth.onDeviceDisconnected = (id) => {
-    const all = storage.getDevices();
-    const device = all.find(d => d.id === id);
-    if (device) {
-      device.connected = false;
-      storage.saveDevice(device);
-      ui.render(storage.getDevices(), storage.getPrefs());
-    }
+    connectedIds.delete(id);
+    ui.render(getDevicesWithStatus(), storage.getPrefs());
   };
 
   bluetooth.onDeviceReconnected = (id, battery) => {
@@ -20,10 +22,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const device = all.find(d => d.id === id);
     if (device) {
       device.battery  = battery;
-      device.connected = true;
       device.lastSeen = Date.now();
       storage.saveDevice(device);
-      ui.render(storage.getDevices(), storage.getPrefs());
+      connectedIds.add(id);
+      ui.render(getDevicesWithStatus(), storage.getPrefs());
     }
   };
 });
@@ -36,16 +38,17 @@ function applyTheme(name) {
 function toggleWidgets() {
   const prefs = storage.getPrefs();
   storage.savePrefs({ widgetsHidden: !prefs.widgetsHidden });
-  ui.render(storage.getDevices(), storage.getPrefs());
+  ui.render(getDevicesWithStatus(), storage.getPrefs());
 }
 
 async function handleAddDevice() {
   ui.showConnectingState();
   await bluetooth.connectNewDevice(
     ({ id, name, battery }) => {
-      const device = { id, name, battery, lastSeen: Date.now(), connected: true };
+      const device = { id, name, battery, lastSeen: Date.now() };
       storage.saveDevice(device);
-      ui.render(storage.getDevices(), storage.getPrefs());
+      connectedIds.add(id);
+      ui.render(getDevicesWithStatus(), storage.getPrefs());
     },
     (id, err) => {
       ui.showErrorCard(id);
@@ -54,8 +57,9 @@ async function handleAddDevice() {
 }
 
 function removeDevice(id) {
+  connectedIds.delete(id);
   storage.removeDevice(id);
-  ui.render(storage.getDevices(), storage.getPrefs());
+  ui.render(getDevicesWithStatus(), storage.getPrefs());
 }
 
 function updateNickname(id, value) {
@@ -64,7 +68,7 @@ function updateNickname(id, value) {
   if (device) {
     device.name = value;
     storage.saveDevice(device);
-    ui.render(storage.getDevices(), storage.getPrefs());
+    ui.render(getDevicesWithStatus(), storage.getPrefs());
   }
 }
 
