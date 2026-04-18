@@ -99,9 +99,104 @@ const ui = (() => {
     });
   }
 
+  function renderBatteryBar(device) {
+    if (device.battery === null) {
+      const label = document.createElement('span');
+      label.className = 'battery-unsupported';
+      label.textContent = 'Battery data not supported by this device';
+      return label;
+    }
+    const wrap = document.createElement('div');
+    wrap.style.display = 'flex';
+    wrap.style.alignItems = 'center';
+    wrap.style.gap = '8px';
+
+    const track = document.createElement('div');
+    track.className = 'battery-bar-track';
+    track.style.flex = '1';
+    const fill = document.createElement('div');
+    fill.className = 'battery-bar-fill';
+    fill.style.backgroundColor = getBatteryColor(device.battery);
+    track.appendChild(fill);
+    requestAnimationFrame(() => {
+      fill.style.width = `${device.battery}%`;
+    });
+
+    const pct = document.createElement('span');
+    pct.textContent = `${device.battery}%`;
+    pct.style.fontSize = '0.82rem';
+    pct.style.color = getBatteryColor(device.battery);
+    pct.style.minWidth = '36px';
+
+    wrap.append(track, pct);
+    return wrap;
+  }
+
   function renderDeviceList(devices) {
-    // stub — implemented in step 7
     listSection.classList.remove('d-none');
+    const tbody = document.querySelector('#device-list tbody');
+    tbody.innerHTML = '';
+
+    devices.forEach(device => {
+      const isLow = device.battery !== null && device.battery < 20;
+      const isConnected = device.connected;
+      const icon = getDeviceIcon(device.name);
+      const timestamp = device.lastSeen ? getRelativeTime(device.lastSeen) : '—';
+
+      const tr = document.createElement('tr');
+      tr.className = 'device-row' + (isLow ? ' low-battery' : '');
+      tr.dataset.deviceId = device.id;
+
+      // Icon cell
+      const tdIcon = document.createElement('td');
+      tdIcon.className = 'cell-icon';
+      tdIcon.textContent = icon;
+
+      // Name cell
+      const tdName = document.createElement('td');
+      tdName.className = 'cell-name';
+      const nameSpan = document.createElement('span');
+      nameSpan.className = 'name-text';
+      nameSpan.textContent = device.name;
+      tdName.appendChild(nameSpan);
+
+      // Status badge cell
+      const tdStatus = document.createElement('td');
+      tdStatus.className = 'cell-status';
+      const badge = document.createElement('span');
+      badge.className = isConnected
+        ? 'badge bg-success'
+        : 'badge bg-secondary';
+      badge.textContent = isConnected ? 'connected' : 'disconnected';
+      tdStatus.appendChild(badge);
+
+      // Last seen cell
+      const tdLastSeen = document.createElement('td');
+      tdLastSeen.className = 'cell-lastseen';
+      tdLastSeen.textContent = timestamp;
+
+      // Battery cell
+      const tdBattery = document.createElement('td');
+      tdBattery.className = 'cell-battery';
+      tdBattery.appendChild(renderBatteryBar(device));
+
+      // Trash cell
+      const tdTrash = document.createElement('td');
+      tdTrash.className = 'cell-trash';
+      const trashBtn = document.createElement('button');
+      trashBtn.className = 'btn-trash';
+      trashBtn.title = 'Remove device';
+      trashBtn.innerHTML = '&#x1F5D1;';
+      trashBtn.addEventListener('click', () => {
+        if (typeof app !== 'undefined' && app.removeDevice) {
+          app.removeDevice(device.id);
+        }
+      });
+      tdTrash.appendChild(trashBtn);
+
+      tr.append(tdIcon, tdName, tdStatus, tdLastSeen, tdBattery, tdTrash);
+      tbody.appendChild(tr);
+    });
   }
 
   function render(devices, prefs) {

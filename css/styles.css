@@ -293,13 +293,10 @@ body {
 
 .device-row {
   border-bottom: 1px solid var(--border);
-  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
   cursor: default;
 }
 
 .device-row:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
   background-color: var(--bg-card);
 }
 

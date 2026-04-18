@@ -53,6 +53,13 @@ async function handleAddDevice() {
   );
 }
 
+function removeDevice(id) {
+  storage.removeDevice(id);
+  ui.render(storage.getDevices(), storage.getPrefs());
+}
+
+const app = { removeDevice };
+
 function bindEvents() {
   document.getElementById('btn-add-device-empty').addEventListener('click', handleAddDevice);
   document.getElementById('btn-add-device').addEventListener('click', handleAddDevice);
