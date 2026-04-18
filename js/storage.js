@@ -10,10 +10,10 @@ const storage = {
 
   saveDevice(device) {
     const devices = this.getDevices();
-    const idx = devices.findIndex(d => d.id === device.id);
+    const idx = devices.findIndex(d => d.id === device.id || d.name === device.name);
     const toSave = { ...device, connected: false };
     if (idx >= 0) {
-      devices[idx] = toSave;
+      devices[idx] = { ...devices[idx], ...toSave };
     } else {
       devices.push(toSave);
     }
