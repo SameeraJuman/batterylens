@@ -32,6 +32,7 @@ Built as my project for the **Learning Hackathon: Spec Driven Development**.
 
 - Some devices don't expose battery level via the standard Bluetooth GATT service — these will show as "Battery data not supported by this device"
 - Web Bluetooth on Windows can occasionally drop the connection immediately after pairing — turning the device off and back on usually fixes it
+- If a device is already actively connected to another device (e.g. your phone), the battery read may fail or return no data — this is a Web Bluetooth limitation, not a bug
 
 ## Live App
 
